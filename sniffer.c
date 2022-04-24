@@ -1,7 +1,8 @@
 /*
-Author: Martin Pentrak
-Date: apr 24 2022 19:27
+Author: Martin Pentrak 
+Date apr 24 19:29
 */
+
 
 
 #include <pcap/pcap.h>
@@ -186,10 +187,8 @@ void   create_filter_expression(char *filter_exp,bool protocols[],char *port) //
 {
     bool first=true;
 
-    printf("first if\n");
     if(protocols[TCP])
     {   
-        printf("befpre first\n");
         if(first)
         {
             first=false;
