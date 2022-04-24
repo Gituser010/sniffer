@@ -26,8 +26,11 @@ Date apr 24 19:29
 #define ICMP    3 
 #define IP6_PROTOCOL 56710
 #define ARP_PROTOCOL 1544
+//kod prevzaty a upraveny z
+//https://www.tcpdump.org/pcap.html
 /* Ethernet addresses are 6 bytes */
 #define ETHER_ADDR_LEN	6
+
 
 /* Ethernet header */
 struct sniff_ethernet {
@@ -78,6 +81,7 @@ struct sniff_tcp {
 	u_short th_sum;		/* checksum */
 	u_short th_urp;		/* urgent pointer */
 };
+//konec citace 
 
 struct IPv4_address{
     u_int8_t first_part;
@@ -369,7 +373,8 @@ void got_packet(u_char *args,const struct pcap_pkthdr *header,const u_char *pack
 
         printf("\n");
         u_int32_t offset=0;
-        for (int j=0;j<packet_len-(size_ip+p_header_size);j++)
+        //first for printout hex output and second print out ascii output in right format 
+        for (int j=0;j<packet_len-(size_ip+p_header_size);j++) 
         {
             if(j==0)
             {
@@ -533,11 +538,11 @@ void got_packet(u_char *args,const struct pcap_pkthdr *header,const u_char *pack
 
 int main(int argc,char **argv)
 {
-    char *opt_string="iputn"; //string for short options
-    bool protocols[4]={false}; //the field where filtered protocols are stored 
+    char *opt_string="iputn"; //string pre krátke možnosti 
+    bool protocols[4]={false}; //pole pre protokoly 
     char errbuf[100];
 
-    static struct option options[] = { //long options
+    static struct option options[] = { //dlhé možnosti 
         {"interface",optional_argument, NULL, 'i'},
         {"tcp",  no_argument, NULL, 't'},
         {"udp",  no_argument, NULL, 'u'},
@@ -545,13 +550,12 @@ int main(int argc,char **argv)
         {"icmp", no_argument, NULL, 0},
         {NULL, 0, NULL, 0}
     };
-    struct port_list *head; //list of ports to be filtered 
-    head=(struct port_list*)malloc(sizeof(struct port_list));
+ 
 
-    char *interface; //on which interface we are sniffing
-    int opt_index=0; //default value to start on first option
+    char *interface; //interface ktorý sa snažíme odchiťiť
+    int opt_index=0; //opt index nam bude úrčovať ktorá premenná bola vybraná
     int short_option;
-    int number_of_packets=1;
+    int number_of_packets=1; //definujeme koľko packetova chceme zachitiŤ
     char *port_number=NULL;
     bool interface_set=false;
     while((short_option=getopt_long(argc,argv,opt_string,options,&opt_index))!=-1)
@@ -632,6 +636,8 @@ int main(int argc,char **argv)
         return(-1);
     }
     
+    //kod prevzaty a upraveny zo stranky 
+    //https://www.tcpdump.org/pcap.html
     pcap_t *handle; //frame handle
     char *filter_exp; //filter_exp
     filter_exp=malloc(sizeof(char));
@@ -665,4 +671,5 @@ int main(int argc,char **argv)
     }
     int a;
     a=pcap_loop(handle,number_of_packets,got_packet,NULL);
+    //konec citace
 }
